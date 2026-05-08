@@ -126,6 +126,20 @@ const updateUser = async (
       });
     }
 
+    // Prevent self role change
+    if (
+      req.params.id ===
+        req.user._id.toString() &&
+      role &&
+      role !== req.user.role
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          'You cannot change your own role',
+      });
+    }
+
     const user =
       await User.findByIdAndUpdate(
         req.params.id,

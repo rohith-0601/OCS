@@ -115,7 +115,7 @@ const ManageUsers = () => {
           <div><label className="label">Full Name</label><input className="input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></div>
           <div><label className="label">Email</label><input type="email" className="input" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required /></div>
           {modal.mode === 'create' && <div><label className="label">Password</label><input type="password" className="input" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required minLength={6} /></div>}
-          <div><label className="label">Role</label><select className="input" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>{ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}</select></div>
+          <div><label className="label">Role</label><select className="input" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} disabled={modal.mode === 'edit' && modal.user?._id === me._id}>{ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}</select>{modal.mode === 'edit' && modal.user?._id === me._id && <p className="text-xs text-gray-400 mt-1">You cannot change your own role</p>}</div>
           <div><label className="label">Department</label><input className="input" placeholder="e.g. OCS, CSE Core..." value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })} /></div>
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => setModal({ open: false })} className="btn-secondary flex-1">Cancel</button>
