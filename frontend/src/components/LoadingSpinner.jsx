@@ -1,17 +1,30 @@
+import { motion } from 'framer-motion'
+import { Loader2 } from 'lucide-react'
+
 const LoadingSpinner = ({ fullScreen = false, size = 'md' }) => {
-  const sizes = { sm: 'w-4 h-4', md: 'w-8 h-8', lg: 'w-12 h-12' }
-  const spinner = <div className={`${sizes[size]} border-2 border-gray-200 border-t-brand-600 rounded-full animate-spin`} />
+  const sizes = { sm: 16, md: 24, lg: 36 }
+  const iconSize = sizes[size] || sizes.md
+
   if (fullScreen) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="flex flex-col items-center gap-3">
-          {spinner}
+      <div className="loading-fullscreen">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="loading-container"
+        >
+          <Loader2 size={iconSize} className="loading-icon" />
           <p className="text-sm text-gray-500">Loading...</p>
-        </div>
+        </motion.div>
       </div>
     )
   }
-  return <div className="flex items-center justify-center py-12">{spinner}</div>
+
+  return (
+    <div className="loading-inline">
+      <Loader2 size={iconSize} className="loading-icon" />
+    </div>
+  )
 }
 
 export default LoadingSpinner

@@ -1,10 +1,15 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { motion } from 'framer-motion'
+import { LayoutDashboard, DoorOpen, CalendarPlus, ClipboardList, Shield, LogOut, Menu, X } from 'lucide-react'
+import { useState } from 'react'
 import toast from 'react-hot-toast'
+import ocsLogo from '../assets/ocs.png'
 
 const Navbar = () => {
   const { user, logout, isAdmin } = useAuth()
   const navigate = useNavigate()
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   const handleLogout = () => {
     logout()
@@ -12,44 +17,93 @@ const Navbar = () => {
     navigate('/login')
   }
 
-  const navClass = ({ isActive }) =>
-    `text-sm font-medium px-3 py-2 rounded-lg transition-colors ${
-      isActive ? 'bg-brand-50 text-brand-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-    }`
+  const navItems = [
+    { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { to: '/rooms', label: 'Rooms', icon: DoorOpen },
+    ...(user?.role !== 'viewer' ? [{ to: '/book', label: 'Book Room', icon: CalendarPlus }] : []),
+    { to: '/my-bookings', label: 'My Bookings', icon: ClipboardList },
+    ...(isAdmin ? [{ to: '/admin', label: 'Admin', icon: Shield }] : []),
+  ]
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link to="/dashboard" className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
+          <Link to="/dashboard" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0">
+              <img
+                src={ocsLogo}
+                alt="OCS"
+                style={{ height: '32px', width: 'auto', maxWidth: 'none', objectFit: 'cover', objectPosition: '28% center' }}
+              />
             </div>
-            <div>
-              <span className="font-semibold text-gray-900 text-sm">OCS Room Booking</span>
-              <span className="block text-xs text-gray-500 leading-tight">IIT Hyderabad</span>
-            </div>
+            <span className="text-sm font-bold text-gray-900 tracking-tight">OCS IITH</span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1">
-            <NavLink to="/dashboard" className={navClass}>Dashboard</NavLink>
-            <NavLink to="/rooms" className={navClass}>Rooms</NavLink>
-            {user?.role !== 'viewer' && <NavLink to="/book" className={navClass}>Book Room</NavLink>}
-            <NavLink to="/my-bookings" className={navClass}>My Bookings</NavLink>
-            {isAdmin && <NavLink to="/admin" className={navClass}>Admin</NavLink>}
+          <nav className="hidden md:flex items-center gap-0.5">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  `flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors ${
+                    isActive
+                      ? 'text-brand-700 bg-brand-50'
+                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                  }`
+                }
+              >
+                <item.icon size={14} strokeWidth={2.5} />
+                {item.label}
+              </NavLink>
+            ))}
           </nav>
 
           <div className="flex items-center gap-3">
             <div className="hidden sm:block text-right">
-              <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-              <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
+              <p className="text-xs font-semibold text-gray-900">{user?.name}</p>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-600 bg-brand-50 px-2 py-0.5 rounded">
+                {user?.role}
+              </span>
             </div>
-            <button onClick={handleLogout} className="btn-secondary text-xs px-3 py-1.5">Logout</button>
+            <button onClick={handleLogout} className="btn-secondary text-xs !px-3 !py-1.5">
+              <LogOut size={14} />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+            <button
+              className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 bg-white text-gray-600"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
           </div>
         </div>
       </div>
+
+      {mobileOpen && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          className="md:hidden border-t border-gray-100 bg-white px-4 py-2"
+        >
+          {navItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) =>
+                `flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive ? 'bg-brand-50 text-brand-700' : 'text-gray-600 hover:bg-gray-50'
+                }`
+              }
+              onClick={() => setMobileOpen(false)}
+            >
+              <item.icon size={16} />
+              {item.label}
+            </NavLink>
+          ))}
+        </motion.div>
+      )}
     </header>
   )
 }

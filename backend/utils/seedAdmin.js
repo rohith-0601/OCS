@@ -16,8 +16,8 @@ const seedAdmin = async () => {
     }
 
     const admin = await User.create({
-      name: 'OCS Admin',
-      email: 'admin@iith.ac.in',
+      name: 'Rohith Perugu',
+      email: 'rohithperugu3@gmail.com',
       password: 'admin123',
       role: 'admin',
       department: 'OCS',

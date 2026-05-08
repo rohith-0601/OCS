@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { motion } from 'framer-motion'
+import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import ocsLogo from '../assets/ocs.png'
 
 const LoginPage = () => {
   const { user, login } = useAuth()
@@ -27,46 +30,90 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-orange-50 via-white to-amber-50 relative overflow-hidden">
+      {/* Subtle radial glows */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-orange-200/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-amber-200/15 rounded-full blur-3xl" />
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="relative w-full max-w-sm"
+      >
+        {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-brand-600 rounded-2xl mb-4 shadow-lg">
-            <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">OCS Room Booking</h1>
-          <p className="text-sm text-gray-500 mt-1">IIT Hyderabad — Office of Career Services</p>
+          <motion.img
+            src={ocsLogo}
+            alt="OCS IITH"
+            style={{ height: '52px', width: 'auto', maxWidth: '200px', objectFit: 'contain', margin: '0 auto 16px' }}
+            className="block"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.15 }}
+          />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>
+            <h1 className="text-xl font-extrabold text-gray-900 tracking-tight">Room Booking System</h1>
+            <p className="text-xs text-gray-500 mt-1">Office of Career Services, IIT Hyderabad</p>
+          </motion.div>
         </div>
 
-        <div className="card p-8 shadow-xl">
-          <h2 className="text-lg font-semibold text-gray-900 mb-6">Sign in to your account</h2>
+        {/* Card */}
+        <motion.div
+          className="bg-white/80 backdrop-blur-xl border border-white/50 rounded-2xl p-8 shadow-xl shadow-black/5"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.4 }}
+        >
+          <h2 className="text-sm font-semibold text-gray-900 mb-6">Sign in to your account</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="label">Email address</label>
-              <input type="email" className="input" placeholder="you@iith.ac.in"
-                value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} autoComplete="email" />
+              <div className="relative">
+                <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                <input
+                  type="email"
+                  className="input pl-9"
+                  placeholder="you@iith.ac.in"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  autoComplete="email"
+                />
+              </div>
             </div>
             <div>
               <label className="label">Password</label>
-              <input type="password" className="input" placeholder="Enter your password"
-                value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} autoComplete="current-password" />
+              <div className="relative">
+                <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                <input
+                  type="password"
+                  className="input pl-9"
+                  placeholder="Enter your password"
+                  value={form.password}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  autoComplete="current-password"
+                />
+              </div>
             </div>
-            <button type="submit" disabled={loading} className="btn-primary w-full py-2.5 mt-2">
+            <button type="submit" disabled={loading} className="btn-primary w-full !py-3 mt-2">
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                  </svg>
+                  <Loader2 size={16} className="animate-spin" />
                   Signing in...
                 </span>
-              ) : 'Sign in'}
+              ) : (
+                <span className="flex items-center justify-center gap-2">
+                  Sign in
+                  <ArrowRight size={16} />
+                </span>
+              )}
             </button>
           </form>
-          <p className="text-xs text-gray-400 text-center mt-4">Account access is provided by the OCS admin only.</p>
-        </div>
-      </div>
+          <p className="text-[11px] text-gray-400 text-center mt-5">Access is managed by the OCS administrator.</p>
+        </motion.div>
+      </motion.div>
     </div>
   )
 }
