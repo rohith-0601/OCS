@@ -1,11 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const {
+import express from 'express';
+import {
   createUser, getAllUsers, updateUser,
   resetUserPassword, deleteUser, getDashboardStats
-} = require('../controllers/adminController');
-const { protect } = require('../middleware/auth');
-const { authorize } = require('../middleware/roleCheck');
+} from '../controllers/adminController.js';
+import { protect } from '../middleware/auth.js';
+import { authorize } from '../middleware/roleCheck.js';
+
+const router = express.Router();
 
 router.use(protect, authorize('admin'));
 
@@ -16,4 +17,4 @@ router.put('/users/:id', updateUser);
 router.put('/users/:id/reset-password', resetUserPassword);
 router.delete('/users/:id', deleteUser);
 
-module.exports = router;
+export default router;

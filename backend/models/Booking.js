@@ -63,7 +63,7 @@ const bookingSchema = new mongoose.Schema(
     {timestamps : true}
 );
 
-bookingSchema.statics.hasconflict = async function(roomId,date,startTime,endTime,excludeBookingTime = null){
+bookingSchema.statics.hasConflict = async function(roomId,date,startTime,endTime,excludeBookingId = null){
     const bookingDate = new Date(date);
 
     bookingDate.setHours(0,0,0,0);
